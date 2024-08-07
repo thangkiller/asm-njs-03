@@ -7536,7 +7536,7 @@ a.text-purple:hover, a.text-purple:focus {
   background: #f9fbfd;
   position: relative;
   transition: 0.2s ease-in;
-  display: none;
+  /* display: none; */
   box-shadow: 0px 3px 9px 0px rgba(162, 176, 190, 0.15);
   border-top-left-radius: 5px;
   border-top-right-radius: 5px; }

@@ -1,16 +1,20 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import HistoryAPI from "../API/HistoryAPI";
 // import PropTypes from 'prop-types';
 import { Link } from "react-router-dom";
 
-Home.propTypes = {};
+// Home.propTypes = {};
 
-function Home(props) {
+function Home() {
    const [history, setHistory] = useState([]);
 
-   useEffect(async () => {
-      const response = await HistoryAPI.getAll();
-      setHistory(response);
+   useEffect(() => {
+      const fetchData = async () => {
+         const response = await HistoryAPI.getAll();
+         setHistory(response);
+      };
+      fetchData();
+      return () => {};
    }, []);
 
    return (
@@ -40,13 +44,9 @@ function Home(props) {
                      <div className='d-flex d-lg-flex d-md-block align-items-center'>
                         <div>
                            <div className='d-inline-flex align-items-center'>
-                              <h2 className='text-dark mb-1 font-weight-medium'>
-                                 2
-                              </h2>
+                              <h2 className='text-dark mb-1 font-weight-medium'>2</h2>
                            </div>
-                           <h6 className='text-muted font-weight-normal mb-0 w-100 text-truncate'>
-                              Clients
-                           </h6>
+                           <h6 className='text-muted font-weight-normal mb-0 w-100 text-truncate'>Clients</h6>
                         </div>
                         <div className='ml-auto mt-md-3 mt-lg-0'>
                            <span className='opacity-7 text-muted'>
@@ -61,14 +61,10 @@ function Home(props) {
                      <div className='d-flex d-lg-flex d-md-block align-items-center'>
                         <div>
                            <h2 className='text-dark mb-1 w-100 text-truncate font-weight-medium'>
-                              <sup className='set-doller'>
-                                 $
-                              </sup>
+                              <sup className='set-doller'>$</sup>
                               44779000
                            </h2>
-                           <h6 className='text-muted font-weight-normal mb-0 w-100 text-truncate'>
-                              Earnings of Month
-                           </h6>
+                           <h6 className='text-muted font-weight-normal mb-0 w-100 text-truncate'>Earnings of Month</h6>
                         </div>
                         <div className='ml-auto mt-md-3 mt-lg-0'>
                            <span className='opacity-7 text-muted'>
@@ -83,13 +79,9 @@ function Home(props) {
                      <div className='d-flex d-lg-flex d-md-block align-items-center'>
                         <div>
                            <div className='d-inline-flex align-items-center'>
-                              <h2 className='text-dark mb-1 font-weight-medium'>
-                                 2
-                              </h2>
+                              <h2 className='text-dark mb-1 font-weight-medium'>2</h2>
                            </div>
-                           <h6 className='text-muted font-weight-normal mb-0 w-100 text-truncate'>
-                              New Order
-                           </h6>
+                           <h6 className='text-muted font-weight-normal mb-0 w-100 text-truncate'>New Order</h6>
                         </div>
                         <div className='ml-auto mt-md-3 mt-lg-0'>
                            <span className='opacity-7 text-muted'>
@@ -245,37 +237,18 @@ function Home(props) {
                                  {history &&
                                     history.map((value) => (
                                        <tr key={value._id}>
-                                          <td>
-                                             {value.idUser}
-                                          </td>
-                                          <td>
-                                             {value.fullname}
-                                          </td>
-                                          <td>
-                                             {value.phone}
-                                          </td>
-                                          <td>
-                                             {value.address}
-                                          </td>
-                                          <td>
-                                             {value.total}
-                                          </td>
-                                          <td>
-                                             {value.delivery
-                                                ? "Đã Vận Chuyển"
-                                                : "Chưa Vận Chuyển"}
-                                          </td>
-                                          <td>
-                                             {value.status
-                                                ? "Đã Thanh Toán"
-                                                : "Chưa Thanh Toán"}
-                                          </td>
+                                          <td>{value.idUser}</td>
+                                          <td>{value.fullname}</td>
+                                          <td>{value.phone}</td>
+                                          <td>{value.address}</td>
+                                          <td>{value.total}</td>
+                                          <td>{value.delivery ? "Đã Vận Chuyển" : "Chưa Vận Chuyển"}</td>
+                                          <td>{value.status ? "Đã Thanh Toán" : "Chưa Thanh Toán"}</td>
                                           <td>
                                              <a
                                                 href='/#'
                                                 style={{
-                                                   cursor:
-                                                      "pointer",
+                                                   cursor: "pointer",
                                                    color: "white",
                                                 }}
                                                 className='btn btn-success'

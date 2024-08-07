@@ -1,103 +1,108 @@
-import React, { useState,useEffect, useContext } from 'react';
-// import { useNavigate } from 'react-router-dom';
-import UserAPI from '../API/UserAPI';
-import { AuthContext } from '../Context/AuthContext';
+import React, { useState, useEffect, useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import UserAPI from "../API/UserAPI";
+import { AuthContext } from "../Context/AuthContext";
 
-import './Login.css';
+import "./Login.css";
 
-const Login = () => {
-	const [email, setEmail] = useState('');
-	const [password, setPassword] = useState('');
-	const [user, setUser] = useState([]);
-	const { loading, error, dispatch } = useContext(AuthContext);
-	// const navigate = useNavigate();
+function Login() {
+   const navi = useNavigate();
+   const [email, setEmail] = useState("");
+   const [password, setPassword] = useState("");
+   const [user, setUser] = useState([]);
+   const { loading, error, dispatch } = useContext(AuthContext);
+   // const navigate = useNavigate();
 
-	useEffect(() => {
-		const fetchData = async () => {
-			const response = await UserAPI.getAllData();
+   useEffect(() => {
+      const fetchData = async () => {
+         const response = await UserAPI.getAllData();
 
-			setUser(response);
-		};
+         setUser(response);
+      };
 
-		fetchData();
-	}, []);
+      fetchData();
+   }, []);
 
-	const handleSubmit = () => {
-		const findUser = user.find((value) => {
-			return value.email === email;
-		});
+   const handleSubmit = async () => {
+      try {
+         if (!email || !password) {
+            alert("email or password not fill!");
+         }
+         const users = await UserAPI.getAllData();
+         console.log("🚀 ~ handleSubmit ~ users:", users);
+         if (users.length === 0) {
+            alert("can not found user!");
+         }
+         const user = users.filter((el) => {
+            return el.email === email && el.password === password;
+         });
+         localStorage.setItem("asm03-user", JSON.stringify(user));
+         dispatch("LOGIN_SUCCESS");
+         return navi("/");
+      } catch (error) {
+         console.log("🚀 ~ handleSubmit ~ error:", error);
+      }
+      // if (findUser.password !== password) {
+      // 	setErrorPassword(true);
+      // 	return;
+      // } else {
+      // 	setErrorPassword(false);
 
-		if (findUser && findUser.password === password) {
-			dispatch({ type: 'LOGIN_SUCCESS', payload: findUser });
-			// navigate("/")
-		} else {
-			alert("Email or password wrong!")
-		}
+      // 	localStorage.setItem('id_user', findUser._id);
 
-		// if (findUser.password !== password) {
-		// 	setErrorPassword(true);
-		// 	return;
-		// } else {
-		// 	setErrorPassword(false);
+      // 	localStorage.setItem('name_user', findUser.fullname);
 
-		// 	localStorage.setItem('id_user', findUser._id);
+      // 	const action = addSession(localStorage.getItem('id_user'));
+      // 	dispatch(action);
 
-		// 	localStorage.setItem('name_user', findUser.fullname);
+      // 	setCheckPush(true);
+      // }
+   };
 
-		// 	const action = addSession(localStorage.getItem('id_user'));
-		// 	dispatch(action);
+   return (
+      <div className='page-wrapper'>
+         <div className='page-breadcrumb'>
+            <div className='row'>
+               <div className='login'>
+                  <div className='heading'>
+                     <h2>Sign in</h2>
+                     <form action='#'>
+                        <div className='input-group input-group-lg'>
+                           <span className='input-group-addon'>
+                              <i className='fa fa-user'></i>
+                           </span>
+                           <input
+                              type='text'
+                              className='form-control'
+                              placeholder='Email'
+                              value={email}
+                              onChange={(e) => setEmail(e.target.value)}
+                           />
+                        </div>
 
-		// 	setCheckPush(true);
-		// }
-	};
+                        <div className='input-group input-group-lg'>
+                           <span className='input-group-addon'>
+                              <i className='fa fa-lock'></i>
+                           </span>
+                           <input
+                              type='password'
+                              className='form-control'
+                              placeholder='Password'
+                              value={password}
+                              onChange={(e) => setPassword(e.target.value)}
+                           />
+                        </div>
 
-	return (
-		<div className='page-wrapper'>
-			<div className='page-breadcrumb'>
-				<div className='row'>
-					<div class='login'>
-						<div class='heading'>
-							<h2>Sign in</h2>
-							<form action='#'>
-								<div className='input-group input-group-lg'>
-									<span className='input-group-addon'>
-										<i className='fa fa-user'></i>
-									</span>
-									<input
-										type='text'
-										className='form-control'
-										placeholder='Email'
-										value={email}
-										onChange={(e) => setEmail(e.target.value)}
-									/>
-								</div>
-
-								<div className='input-group input-group-lg'>
-									<span className='input-group-addon'>
-										<i className='fa fa-lock'></i>
-									</span>
-									<input
-										type='password'
-										className='form-control'
-										placeholder='Password'
-										value={password}
-										onChange={(e) => setPassword(e.target.value)}
-									/>
-								</div>
-
-								<button
-									type='button'
-									className='float'
-									onClick={handleSubmit}>
-									Login
-								</button>
-							</form>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	);
-};
+                        <button type='button' className='float' onClick={handleSubmit}>
+                           Login
+                        </button>
+                     </form>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+   );
+}
 
 export default Login;
