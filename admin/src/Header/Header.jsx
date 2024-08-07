@@ -1,15 +1,21 @@
 import React from "react";
 import { AuthContext } from "../Context/AuthContext";
-import { useContext } from "react";
-import { Link } from "react-router-dom";
+import { useContext, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 // import Logoicon from '../Image/logo-icon.png';
 // import Logotext from '../Image/logo-text.png';
 // import Logolight from '../Image/logo-light-text.png';
 
 function Header(props) {
+   const navi = useNavigate();
    const { user } = useContext(AuthContext);
-   const { loading, error, dispatch } =
-      useContext(AuthContext);
+   const { loading, error, dispatch } = useContext(AuthContext);
+   useEffect(() => {
+      if (!user) {
+         return navi("/login");
+      }
+      return null;
+   }, []);
 
    const handleLogout = () => {
       dispatch("LOGOUT");
@@ -19,10 +25,7 @@ function Header(props) {
       <header className='topbar' data-navbarbg='skin6'>
          <nav className='navbar top-navbar navbar-expand-md'>
             <div className='navbar-header' data-logobg='skin6'>
-               <a
-                  className='nav-toggler waves-effect waves-light d-block d-md-none'
-                  href='/#'
-               >
+               <a className='nav-toggler waves-effect waves-light d-block d-md-none' href='/#'>
                   <i className='ti-menu ti-close'></i>
                </a>
                <div className='navbar-brand'>
@@ -65,10 +68,7 @@ function Header(props) {
 						<i className='ti-more'></i>
 					</a> */}
             </div>
-            <div
-               className='navbar-collapse collapse'
-               id='navbarSupportedContent'
-            >
+            <div className='navbar-collapse collapse' id='navbarSupportedContent'>
                <ul className='navbar-nav float-left mr-auto ml-3 pl-1'>
                   <li className='nav-item dropdown'>
                      {/* <a
@@ -81,10 +81,7 @@ function Header(props) {
 								aria-expanded='false'>
 								<i data-feather='settings' className='svg-icon'></i>
 							</a> */}
-                     <div
-                        className='dropdown-menu'
-                        aria-labelledby='navbarDropdown'
-                     >
+                     <div className='dropdown-menu' aria-labelledby='navbarDropdown'>
                         <a className='dropdown-item' href='/#'>
                            Action
                         </a>
@@ -114,26 +111,13 @@ function Header(props) {
 									width='40'
 								/> */}
                         <span className='ml-2 d-none d-lg-inline-block'>
-                           <span>Hello,</span>{" "}
-                           <span className='text-dark'>
-                              {user ? user.email : ""}
-                           </span>{" "}
-                           <i
-                              data-feather='chevron-down'
-                              className='svg-icon'
-                           ></i>
+                           <span>Hello,</span> <span className='text-dark'>{user ? user.email : ""}</span>{" "}
+                           <i data-feather='chevron-down' className='svg-icon'></i>
                         </span>
                      </a>
                      <div className='dropdown-menu dropdown-menu-right user-dd animated flipInY'>
-                        <a
-                           href='/#'
-                           className='dropdown-item'
-                           onClick={handleLogout}
-                        >
-                           <i
-                              data-feather='power'
-                              className='svg-icon mr-2 ml-1'
-                           ></i>
+                        <a href='/#' className='dropdown-item' onClick={handleLogout}>
+                           <i data-feather='power' className='svg-icon mr-2 ml-1'></i>
                            Logout
                         </a>
                      </div>

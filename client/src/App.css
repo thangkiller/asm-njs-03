@@ -1,7 +1,10 @@
 body {
-	font-family: 'Rajdhani', sans-serif;
+   font-family: "Rajdhani", sans-serif;
 }
 
 .App {
-	margin-bottom: -50px;
+   margin-bottom: -50px;
+}
+iframe {
+   pointer-events: none;
 }

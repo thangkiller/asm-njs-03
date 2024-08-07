@@ -31,9 +31,7 @@ function Chat(props) {
    // Tức là khi admin chọn người dùng mà admin muốn chat thì state id_user2 sẽ thay đổi
    // để gọi lại hàm này
    const fetchData = async () => {
-      const result = await ChatRoomsAPI.getMessageByRoomId(
-         roomId
-      );
+      const result = await ChatRoomsAPI.getMessageByRoomId(roomId);
       setMessage(result.content || []);
    };
    useEffect(() => {
@@ -45,9 +43,7 @@ function Chat(props) {
    // Đây là hàm lấy dữ liệu từ api dựa vào state load
    // Dùng để load lại tin nhắn khi có socket từ server gửi tới
    const fetchMessage = async () => {
-      const result = await ChatRoomsAPI.getMessageByRoomId(
-         roomId
-      );
+      const result = await ChatRoomsAPI.getMessageByRoomId(roomId);
       setMessage(result.content || []);
    };
    useEffect(() => {
@@ -79,15 +75,19 @@ function Chat(props) {
       };
 
       const postData = async () => {
-         await ChatRoomsAPI.addMessage(data);
+         const res = await ChatRoomsAPI.addMessage(data);
+         socket.emit("client_send_message", data);
+         if (!res.ok) {
+            return;
+         }
       };
       postData();
       setTextMessage("");
 
-      setTimeout(() => {
-         socket.emit("send_message", data);
-         setLoad(true);
-      }, 200);
+      // setTimeout(() => {
+      //    socket.emit("send_message", data);
+      //    setLoad(true);
+      // }, 200);
    };
    const handleRoomChange = (roomId) => {
       setRoomId(roomId);
@@ -98,22 +98,14 @@ function Chat(props) {
          <div className='page-breadcrumb'>
             <div className='row'>
                <div className='col-7 align-self-center'>
-                  <h4 className='page-title text-truncate text-dark font-weight-medium mb-1'>
-                     Chat
-                  </h4>
+                  <h4 className='page-title text-truncate text-dark font-weight-medium mb-1'>Chat</h4>
                   <div className='d-flex align-items-center'>
                      <nav aria-label='breadcrumb'>
                         <ol className='breadcrumb m-0 p-0'>
-                           <li
-                              className='breadcrumb-item text-muted active'
-                              aria-current='page'
-                           >
+                           <li className='breadcrumb-item text-muted active' aria-current='page'>
                               Apps
                            </li>
-                           <li
-                              className='breadcrumb-item text-muted'
-                              aria-current='page'
-                           >
+                           <li className='breadcrumb-item text-muted' aria-current='page'>
                               Chat
                            </li>
                         </ol>
@@ -130,11 +122,7 @@ function Chat(props) {
                         <div className='col-lg-3 col-xl-2 border-right'>
                            <div className='card-body border-bottom'>
                               <form>
-                                 <input
-                                    className='form-control'
-                                    type='text'
-                                    placeholder='Search Contact'
-                                 />
+                                 <input className='form-control' type='text' placeholder='Search Contact' />
                               </form>
                            </div>
                            <div
@@ -147,40 +135,28 @@ function Chat(props) {
                                  <li>
                                     <div className='message-center'>
                                        {allRoom &&
-                                          allRoom.map(
-                                             (value) => (
-                                                <a
-                                                   href='/#'
-                                                   key={
-                                                      value._id
-                                                   }
-                                                   onClick={() =>
-                                                      handleRoomChange(
-                                                         value._id
-                                                      )
-                                                   }
-                                                   className='message-item d-flex align-items-center border-bottom px-3 py-2 active_user'
-                                                >
-                                                   <div className='user-img'>
-                                                      {" "}
-                                                      <img
-                                                         src='https://img.icons8.com/color/36/000000/administrator-male.png'
-                                                         alt='user'
-                                                         className='img-fluid rounded-circle'
-                                                         width='40px'
-                                                      />{" "}
-                                                      <span className='profile-status away float-right'></span>
-                                                   </div>
-                                                   <div className='w-75 d-inline-block v-middle pl-2'>
-                                                      <h6 className='message-title mb-0 mt-1'>
-                                                         {
-                                                            value._id
-                                                         }
-                                                      </h6>
-                                                   </div>
-                                                </a>
-                                             )
-                                          )}
+                                          allRoom.map((value) => (
+                                             <a
+                                                href='/#'
+                                                key={value._id}
+                                                onClick={() => handleRoomChange(value._id)}
+                                                className='message-item d-flex align-items-center border-bottom px-3 py-2 active_user'
+                                             >
+                                                <div className='user-img'>
+                                                   {" "}
+                                                   <img
+                                                      src='https://img.icons8.com/color/36/000000/administrator-male.png'
+                                                      alt='user'
+                                                      className='img-fluid rounded-circle'
+                                                      width='40px'
+                                                   />{" "}
+                                                   <span className='profile-status away float-right'></span>
+                                                </div>
+                                                <div className='w-75 d-inline-block v-middle pl-2'>
+                                                   <h6 className='message-title mb-0 mt-1'>{value._id}</h6>
+                                                </div>
+                                             </a>
+                                          ))}
                                     </div>
                                  </li>
                               </ul>
@@ -197,25 +173,16 @@ function Chat(props) {
                                  {message &&
                                     message.map((value) =>
                                        value.is_admin ? (
-                                          <li
-                                             className='chat-item odd list-style-none mt-3'
-                                             key={value.id}
-                                          >
+                                          <li className='chat-item odd list-style-none mt-3' key={value.id}>
                                              <div className='chat-content text-right d-inline-block pl-3'>
                                                 <div className='box msg p-2 d-inline-block mb-1'>
-                                                   You:{" "}
-                                                   {
-                                                      value.message
-                                                   }
+                                                   You: {value.message}
                                                 </div>
                                                 <br />
                                              </div>
                                           </li>
                                        ) : (
-                                          <li
-                                             className='chat-item list-style-none mt-3'
-                                             key={value.id}
-                                          >
+                                          <li className='chat-item list-style-none mt-3' key={value.id}>
                                              <div className='chat-img d-inline-block'>
                                                 <img
                                                    src='https://img.icons8.com/color/36/000000/administrator-male.png'
@@ -225,14 +192,9 @@ function Chat(props) {
                                                 />
                                              </div>
                                              <div className='chat-content d-inline-block pl-3'>
-                                                <h6 className='font-weight-medium'>
-                                                   {value.name}
-                                                </h6>
+                                                <h6 className='font-weight-medium'>{value.name}</h6>
                                                 <div className='msg p-2 d-inline-block mb-1'>
-                                                   Client:{" "}
-                                                   {
-                                                      value.message
-                                                   }
+                                                   Client: {value.message}
                                                 </div>
                                              </div>
                                              <div className='chat-time d-block font-10 mt-1 mr-0 mb-3'></div>
@@ -250,9 +212,7 @@ function Chat(props) {
                                           placeholder='Type and enter'
                                           className='form-control border-0'
                                           type='text'
-                                          onChange={
-                                             onChangeText
-                                          }
+                                          onChange={onChangeText}
                                           value={textMessage}
                                        />
                                     </div>
